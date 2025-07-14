@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestie’s Tic-Tac-Toe 💖</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ffcccc, #ff99cc, #cc99ff);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(to right, #ff6666, #ff99cc);
+            z-index: 10;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-bottom: 2px dashed #fff;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Pacifico', cursive;
+            font-size: 1.5em;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-shadow: 0 0 10px #fff, 0 0 20px #ffcccc;
+        }
+
+        nav ul li a:hover {
+            color: #ffeb3b;
+            text-shadow: 0 0 15px #ffeb3b, 0 0 25px #ffeb3b, 0 0 30px #ffeb3b;
+        }
+
+        .content-card {
+            margin-top: 100px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+            z-index: 5;
+            position: relative;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #ff4081;
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-family: 'Dancing Script', cursive;
+            text-shadow: 0 0 10px #ff80ab, 0 0 20px #ff80ab;
+        }
+
+        #gameCanvas {
+            border: 3px solid #ff4081;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            touch-action: none;
+        }
+
+        #gameInfo {
+            display: flex;
+            justify-content: space-between;
+            width: 400px;
+            font-size: 20px;
+            margin: 10px 0;
+            color: #6b4e9b;
+        }
+
+        #buttonContainer {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .gameButton {
+            background: #ff4081;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #ff80ab;
+            font-family: 'Pacifico', cursive;
+        }
+
+        .gameButton:hover {
+            background: #ff80ab;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #ff80ab;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(#ff6666, #ff99cc);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        .balloon:nth-child(1) { top: 10%; left: 10%; }
+        .balloon:nth-child(2) { top: 15%; right: 10%; }
+        .balloon:nth-child(3) { bottom: 15%; left: 15%; }
+        .balloon:nth-child(4) { bottom: 10%; right: 15%; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="funzone.html">FunZone</a></li>
+                <li><a href="galleries.html">Galleries</a></li>
+                <li><a href="shayari.html">Shayari</a></li>
+                <li><a href="Gamehub.html">Game</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="content-card">
+        <h1>Bestie’s Tic-Tac-Toe 💖</h1>
+        <div id="gameInfo">
+            <span id="playerScore">X Wins: 0</span>
+            <span id="computerScore">O Wins: 0</span>
+            <span id="ties">Ties: 0</span>
+        </div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div id="buttonContainer">
+            <button id="backButton" class="gameButton">Back</button>
+            <button id="resetButton" class="gameButton">Reset Game</button>
+        </div>
+    </div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const playerScoreDisplay = document.getElementById('playerScore');
+        const computerScoreDisplay = document.getElementById('computerScore');
+        const tiesDisplay = document.getElementById('ties');
+        const resetButton = document.getElementById('resetButton');
+        const backButton = document.getElementById('backButton');
+
+        let playerScore = 0;
+        let computerScore = 0;
+        let ties = 0;
+        let board = Array(9).fill(null);
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let resultText = '';
+
+        const cellSize = 400 / 3;
+        const cells = [
+            { x: 0, y: 0, index: 0 },
+            { x: cellSize, y: 0, index: 1 },
+            { x: cellSize * 2, y: 0, index: 2 },
+            { x: 0, y: cellSize, index: 3 },
+            { x: cellSize, y: cellSize, index: 4 },
+            { x: cellSize * 2, y: cellSize, index: 5 },
+            { x: 0, y: cellSize * 2, index: 6 },
+            { x: cellSize, y: cellSize * 2, index: 7 },
+            { x: cellSize * 2, y: cellSize * 2, index: 8 }
+        ];
+
+        const winConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+
+        function drawBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#ff4081';
+            ctx.lineWidth = 5;
+
+            // Draw grid
+            ctx.beginPath();
+            ctx.moveTo(cellSize, 0);
+            ctx.lineTo(cellSize, canvas.height);
+            ctx.moveTo(cellSize * 2, 0);
+            ctx.lineTo(cellSize * 2, canvas.height);
+            ctx.moveTo(0, cellSize);
+            ctx.lineTo(canvas.width, cellSize);
+            ctx.moveTo(0, cellSize * 2);
+            ctx.lineTo(canvas.width, cellSize * 2);
+            ctx.stroke();
+
+            // Draw X and O
+            ctx.font = '60px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            board.forEach((mark, index) => {
+                if (mark) {
+                    const cell = cells[index];
+                    ctx.fillStyle = mark === 'X' ? '#ff4081' : '#6b4e9b';
+                    ctx.fillText(mark === 'X' ? '❌' : '⭕', cell.x + cellSize / 2, cell.y + cellSize / 2);
+                }
+            });
+
+            // Draw result text
+            if (!gameActive) {
+                ctx.font = '30px Arial';
+                ctx.fillStyle = '#ff4081';
+                ctx.fillText(resultText, canvas.width / 2, canvas.height - 30);
+            }
+        }
+
+        function checkWinner() {
+            for (const condition of winConditions) {
+                const [a, b, c] = condition;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            return board.includes(null) ? null : 'Tie';
+        }
+
+        function findBestMove(player) {
+            for (const condition of winConditions) {
+                const [a, b, c] = condition;
+                const cells = [board[a], board[b], board[c]];
+                if (cells.filter(cell => cell === player).length === 2 && cells.includes(null)) {
+                    return [a, b, c].find(index => board[index] === null);
+                }
+            }
+            return null;
+        }
+
+        function computerMove() {
+            if (!gameActive || currentPlayer !== 'O') return;
+
+            // Check for winning move
+            let move = findBestMove('O');
+            if (move !== null) {
+                board[move] = 'O';
+            } else {
+                // Check for blocking player's win
+                move = findBestMove('X');
+                if (move !== null) {
+                    board[move] = 'O';
+                } else {
+                    // Random move
+                    const availableCells = board.map((cell, index) => cell === null ? index : null).filter(index => index !== null);
+                    if (availableCells.length > 0) {
+                        const randomIndex = availableCells[Math.floor(Math.random() * availableCells.length)];
+                        board[randomIndex] = 'O';
+                    } else {
+                        return; // No moves available
+                    }
+                }
+            }
+
+            currentPlayer = 'X';
+            const winner = checkWinner();
+            if (winner) {
+                gameActive = false;
+                if (winner === 'X') {
+                    playerScore++;
+                    resultText = 'You Win! 🎉';
+                    playerScoreDisplay.textContent = `X Wins: ${playerScore}`;
+                } else if (winner === 'O') {
+                    computerScore++;
+                    resultText = 'Computer Wins! 😿';
+                    computerScoreDisplay.textContent = `O Wins: ${computerScore}`;
+                } else {
+                    ties++;
+                    resultText = 'It’s a Tie! 💞';
+                    tiesDisplay.textContent = `Ties: ${ties}`;
+                }
+            }
+            drawBoard();
+        }
+
+        function handleMove(index) {
+            if (!gameActive || board[index] || currentPlayer !== 'X') return;
+            board[index] = 'X';
+            currentPlayer = 'O';
+            drawBoard();
+            const winner = checkWinner();
+            if (winner) {
+                gameActive = false;
+                if (winner === 'X') {
+                    playerScore++;
+                    resultText = 'You Win! 🎉';
+                    playerScoreDisplay.textContent = `X Wins: ${playerScore}`;
+                } else if (winner === 'O') {
+                    computerScore++;
+                    resultText = 'Computer Wins! 😿';
+                    computerScoreDisplay.textContent = `O Wins: ${computerScore}`;
+                } else {
+                    ties++;
+                    resultText = 'It’s a Tie! 💞';
+                    tiesDisplay.textContent = `Ties: ${ties}`;
+                }
+                drawBoard();
+            } else {
+                setTimeout(computerMove, 500); // Delay for better UX
+            }
+        }
+
+        // Mouse controls
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            cells.forEach(cell => {
+                if (
+                    clickX >= cell.x &&
+                    clickX <= cell.x + cellSize &&
+                    clickY >= cell.y &&
+                    clickY <= cell.y + cellSize
+                ) {
+                    handleMove(cell.index);
+                }
+            });
+        });
+
+        // Touch controls
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+            const touchY = touch.clientY - rect.top;
+            cells.forEach(cell => {
+                if (
+                    touchX >= cell.x &&
+                    touchX <= cell.x + cellSize &&
+                    touchY >= cell.y &&
+                    touchY <= cell.y + cellSize
+                ) {
+                    handleMove(cell.index);
+                }
+            });
+        });
+
+        resetButton.addEventListener('click', () => {
+            board = Array(9).fill(null);
+            currentPlayer = 'X';
+            gameActive = true;
+            resultText = '';
+            drawBoard();
+        });
+
+        backButton.addEventListener('click', () => {
+            window.location.href = 'Gamehub.html';
+        });
+
+        // Initial draw
+        drawBoard();
+    </script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestie’s Rock Paper Scissors 💖</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ffcccc, #ff99cc, #cc99ff);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(to right, #ff6666, #ff99cc);
+            z-index: 10;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-bottom: 2px dashed #fff;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Pacifico', cursive;
+            font-size: 1.5em;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-shadow: 0 0 10px #fff, 0 0 20px #ffcccc;
+        }
+
+        nav ul li a:hover {
+            color: #ffeb3b;
+            text-shadow: 0 0 15px #ffeb3b, 0 0 25px #ffeb3b, 0 0 30px #ffeb3b;
+        }
+
+        .content-card {
+            margin-top: 100px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+            z-index: 5;
+            position: relative;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #ff4081;
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-family: 'Dancing Script', cursive;
+            text-shadow: 0 0 10px #ff80ab, 0 0 20px #ff80ab;
+        }
+
+        #gameCanvas {
+            border: 3px solid #ff4081;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            touch-action: none;
+        }
+
+        #gameInfo {
+            display: flex;
+            justify-content: space-between;
+            width: 400px;
+            font-size: 20px;
+            margin: 10px 0;
+            color: #6b4e9b;
+        }
+
+        #buttonContainer {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .gameButton {
+            background: #ff4081;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #ff80ab;
+            font-family: 'Pacifico', cursive;
+        }
+
+        .gameButton:hover {
+            background: #ff80ab;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #ff80ab;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background: linear-gradient(#ff6666, #ff99cc);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        .balloon:nth-child(1) { top: 10%; left: 10%; }
+        .balloon:nth-child(2) { top: 15%; right: 10%; }
+        .balloon:nth-child(3) { bottom: 15%; left: 15%; }
+        .balloon:nth-child(4) { bottom: 10%; right: 15%; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="funzone.html">FunZone</a></li>
+                <li><a href="galleries.html">Galleries</a></li>
+                <li><a href="shayari.html">Shayari</a></li>
+                <li><a href="Gamehub.html">Game</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="content-card">
+        <h1>Bestie’s Rock Paper Scissors 💖</h1>
+        <div id="gameInfo">
+            <span id="playerScore">You: 0</span>
+            <span id="computerScore">Computer: 0</span>
+            <span id="ties">Ties: 0</span>
+        </div>
+        <canvas id="gameCanvas" width="400" height="200"></canvas>
+        <div id="buttonContainer">
+            <button id="backButton" class="gameButton" a her>Back</button>
+            <button id="resetButton" class="gameButton">Reset Game</button>
+        </div>
+    </div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const playerScoreDisplay = document.getElementById('playerScore');
+        const computerScoreDisplay = document.getElementById('computerScore');
+        const tiesDisplay = document.getElementById('ties');
+        const resetButton = document.getElementById('resetButton');
+        const backButton = document.getElementById('backButton');
+
+        let playerScore = 0;
+        let computerScore = 0;
+        let ties = 0;
+        let playerChoice = null;
+        let computerChoice = null;
+        let resultText = '';
+
+        const choices = ['rock', 'paper', 'scissors'];
+        const emojis = { rock: '✊', paper: '✋', scissors: '✌️' };
+        const choiceAreas = [
+            { choice: 'rock', x: 50, y: 50, width: 50, height: 50 },
+            { choice: 'paper', x: 175, y: 50, width: 50, height: 50 },
+            { choice: 'scissors', x: 300, y: 50, width: 50, height: 50 }
+        ];
+
+        function getComputerChoice() {
+            const randomIndex = Math.floor(Math.random() * 3);
+            return choices[randomIndex];
+        }
+
+        function determineWinner(player, computer) {
+            if (player === computer) {
+                ties++;
+                return 'It’s a Tie! 💞';
+            }
+            if (
+                (player === 'rock' && computer === 'scissors') ||
+                (player === 'paper' && computer === 'rock') ||
+                (player === 'scissors' && computer === 'paper')
+            ) {
+                playerScore++;
+                return 'You Win! 🎉';
+            }
+            computerScore++;
+            return 'Computer Wins! 😿';
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '40px Arial';
+            ctx.textAlign = 'center';
+            // Draw choice areas
+            choiceAreas.forEach(area => {
+                ctx.fillStyle = playerChoice === area.choice ? '#ff80ab' : '#f0f0f0';
+                ctx.fillRect(area.x - 25, area.y - 25, area.width, area.height);
+                ctx.fillStyle = '#333';
+                ctx.fillText(emojis[area.choice], area.x, area.y + 15);
+            });
+            // Draw results
+            ctx.font = '20px Arial';
+            ctx.fillText(`You: ${playerChoice ? emojis[playerChoice] : '❓'} vs Computer: ${computerChoice ? emojis[computerChoice] : '❓'}`, 200, 120);
+            ctx.fillText(resultText, 200, 160);
+        }
+
+        function playRound(choice) {
+            playerChoice = choice;
+            computerChoice = getComputerChoice();
+            resultText = determineWinner(playerChoice, computerChoice);
+            playerScoreDisplay.textContent = `You: ${playerScore}`;
+            computerScoreDisplay.textContent = `Computer: ${computerScore}`;
+            tiesDisplay.textContent = `Ties: ${ties}`;
+            drawGame();
+        }
+
+        // Mouse controls
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            choiceAreas.forEach(area => {
+                if (
+                    clickX >= area.x - 25 &&
+                    clickX <= area.x + 25 &&
+                    clickY >= area.y - 25 &&
+                    clickY <= area.y + 25
+                ) {
+                    playRound(area.choice);
+                }
+            });
+        });
+
+        // Touch controls
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const touchX = touch.clientX - rect.left;
+            const touchY = touch.clientY - rect.top;
+            choiceAreas.forEach(area => {
+                if (
+                    touchX >= area.x - 25 &&
+                    touchX <= area.x + 25 &&
+                    touchY >= area.y - 25 &&
+                    touchY <= area.y + 25
+                ) {
+                    playRound(area.choice);
+                }
+            });
+        });
+
+        resetButton.addEventListener('click', () => {
+            playerScore = 0;
+            computerScore = 0;
+            ties = 0;
+            playerChoice = null;
+            computerChoice = null;
+            resultText = '';
+            playerScoreDisplay.textContent = `You: ${playerScore}`;
+            computerScoreDisplay.textContent = `Computer: ${computerScore}`;
+            tiesDisplay.textContent = `Ties: ${ties}`;
+            drawGame();
+        });
+
+        backButton.addEventListener('click', () => {
+            window.location.href = 'Gamehub.html';
+        });
+
+        // Initial draw
+        drawGame();
+    </script>
+</body>
+</html>

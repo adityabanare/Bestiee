@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galleries - Birthday Memories</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ffcccc, #ff99cc, #cc99ff);
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      touch-action: pan-y;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: linear-gradient(to right, #ff6666, #ff99cc);
+      z-index: 10;
+      padding: 10px 0;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border-bottom: 2px dashed #fff;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    nav ul li {
+      display: inline;
+    }
+
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Pacifico', cursive;
+      font-size: 1.5em;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      text-shadow: 0 0 10px #fff, 0 0 20px #ffcccc;
+    }
+
+    nav ul li a:hover {
+      color: #ffeb3b;
+      text-shadow: 0 0 15px #ffeb3b, 0 0 25px #ffeb3b, 0 0 30px #ffeb3b;
+    }
+
+    .gallery {
+      margin-top: 100px;
+      padding: 30px;
+      text-align: center;
+      width: 80%;
+      max-width: 900px;
+      z-index: 5;
+    }
+
+    .main-image {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+      margin-bottom: 20px;
+    }
+
+    .wishes {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+      margin-bottom: 30px;
+      font-size: 2em;
+      color: #ff4081;
+      font-family: 'Dancing Script', cursive;
+      text-shadow: 0 0 10px #ff80ab;
+    }
+
+    .small-cards {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .small-card {
+      max-width: 100%;
+      width: 220px;
+      height: 220px;
+      background: #fff;
+      border: 2px solid #ff4081;
+      border-radius: 10px;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .small-card:hover {
+      transform: scale(1.1);
+    }
+
+    .small-card img {
+      max-width: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .emoji-hover {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2em;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .small-card:hover .emoji-hover {
+      opacity: 1;
+    }
+
+    /* Image Cards Styles */
+    .image-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px 0;
+    }
+
+    .image-card {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      background: #fff;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .image-card:hover {
+      transform: scale(1.05);
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-card .emoji-hover {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.5em;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      color: #ff4081;
+    }
+
+    .image-card:hover .emoji-hover {
+      opacity: 1;
+    }
+
+    /* Decorations */
+    .balloon {
+      position: absolute;
+      width: 50px;
+      height: 70px;
+      background: linear-gradient(#ff6666, #ff99cc);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: float 4s infinite ease-in-out;
+    }
+
+    .balloon:nth-child(1) { top: 10%; left: 10%; }
+    .balloon:nth-child(2) { top: 15%; right: 10%; }
+    .balloon:nth-child(3) { bottom: 15%; left: 15%; }
+    .balloon:nth-child(4) { bottom: 10%; right: 15%; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="funzone.html">FunZone</a></li>
+        <li><a href="galleries.html">Galleries</a></li>
+        <li><a href="shayari.html">Shayari</a></li>
+        <li><a href="Gamehub.html">Game</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="gallery">
+    <img src="aaa.png"Main Birthday Image" class="main-image">
+    <div class="wishes">
+      Happy Birthday Wishes!<br>
+      To my amazing bestie, may this year bring you endless joy, love, and laughter! 🎉💖
+    
+    </div>
+    
+    <div class="small-cards">
+      <div class="small-card">
+        <img src="anu.png" sizes="400px" >
+        <div class="emoji-hover"></div>
+      </div>
+      <div class="small-card">
+        <img src="hb.png" sizes="100px" >
+        <div class="emoji-hover"></div>
+      </div>
+      <div class="small-card">
+        <img src="b.png" sizes="400px">
+        <div class="emoji-hover"></div>
+      </div>
+    </div>
+    </div>
+  <div class="balloon"></div>
+  <div class="balloon"></div>
+  <div class="balloon"></div>
+  <div class="balloon"></div>
+</body>
+</html>
